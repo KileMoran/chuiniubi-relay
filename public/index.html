@@ -2,93 +2,432 @@
 <html lang="zh-CN">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <meta name="theme-color" content="#18130f">
-  <title>吹牛逼 · 免费联机备用入口检测</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#130d09">
+  <meta name="description" content="吹牛逼 · 中国玩家入口。为中英好友准备的游戏备用联机大厅：输入房间号快速加入，检测服务器与 WebSocket 连接。">
+  <title>吹牛逼 · 中国玩家入口 | KyleMoran</title>
   <style>
-    :root { color-scheme: dark; --gold:#e5c189; --weak:#baa991; --bg:#130f0c; --panel:#262018; --line:#806c4b; }
+    :root {
+      color-scheme:dark;
+      --bg:#100c09;--surface:#1a130e;--surface2:#241a12;
+      --gold:#f3c781;--gold-light:#ffe7b2;--gold-dark:#c58d46;
+      --line:rgba(227,177,103,.29);--text:#fff0d8;--muted:#bbaa95;
+      --green:#98e7b1;--red:#ffb3a8;--amber:#f9d18e;
+    }
     *{box-sizing:border-box}
-    body{margin:0;min-height:100dvh;background:radial-gradient(ellipse at 14% 0%,#46311e 0%,transparent 42%),radial-gradient(ellipse at 94% 15%,#3b251a 0%,transparent 36%),var(--bg);color:#f9ecd5;font:15px/1.6 system-ui,"PingFang SC","Microsoft YaHei",sans-serif;}
-    main{max-width:810px;margin:0 auto;padding:clamp(20px,5vw,54px) 16px 64px}
-    .eyebrow{letter-spacing:.22em;color:#dab879;font-size:12px;font-weight:800;margin-bottom:8px}
-    h1{font-size:clamp(28px,5vw,42px);margin:0 0 8px;letter-spacing:.02em}
-    h1 em{font-style:normal;color:var(--gold)}
-    p{color:#cfbda4;margin:0 0 20px}
-    .card{background:linear-gradient(145deg,#30251c,#191715);border:1px solid #9e815742;border-radius:17px;padding:19px;margin-top:16px;box-shadow:0 15px 35px #0005}
-    h2{font-size:18px;margin:0 0 6px;color:var(--gold)}
-    .desc{font-size:13px;margin-bottom:13px;color:#bba98f}
-    .actions{display:flex;flex-wrap:wrap;gap:9px}
-    button,a.button{background:linear-gradient(#f8dca8,#d09d54);color:#2c1b0b;border:0;border-radius:9px;padding:10px 14px;font:800 14px system-ui,"Microsoft YaHei",sans-serif;cursor:pointer;text-decoration:none}
-    button.secondary{background:#393026;color:#fae1b6;border:1px solid #a78b5e80}
-    button:focus-visible,input:focus-visible{outline:2px solid #ffe4a9;outline-offset:2px}
-    .status{min-height:54px;margin-top:10px;border-radius:10px;background:#100d0bcc;border:1px solid #584835;padding:10px 12px;white-space:pre-wrap;overflow-wrap:anywhere;font-family:ui-monospace,monospace;font-size:12px}
-    .ok{color:#97ebbd}.bad{color:#ffaba5}.warn{color:#e9c17b}
-    label{display:block;margin:6px 0;color:#e7d3b7;font-weight:750;font-size:13px}
-    input{width:100%;background:#100f0e;color:#ffe4b8;border:1px solid #a98b6177;border-radius:9px;padding:12px;font-size:16px;text-transform:uppercase;letter-spacing:.12em}
-    .small{font-size:12px;color:#af9c81;margin-top:10px}
-    code{font-size:.95em;color:#ffdc9f}
-    footer{font-size:12px;margin-top:25px;color:#9d8c79}
+    html{min-width:320px;scroll-behavior:smooth}
+    body{min-width:320px;min-height:100dvh;margin:0;color:var(--text);background:#100c09;font-family:system-ui,-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;line-height:1.55}
+    body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:-1;background:radial-gradient(ellipse 55% 53% at 9% 13%,#67412677,transparent),radial-gradient(ellipse 42% 52% at 93% 83%,#57321c65,transparent),repeating-linear-gradient(120deg,#f6c87d05 0 1px,transparent 1px 100px),#100c09}
+    a{color:inherit;text-decoration:none}button,input{font:inherit}button{cursor:pointer}button:disabled{cursor:progress;opacity:.75}
+    .outer{min-height:100dvh;display:flex;flex-direction:column;justify-content:center;align-items:center;padding:clamp(12px,3vw,35px)}
+    .shell{isolation:isolate;width:min(1170px,100%);border:1px solid #a178446b;border-radius:25px;overflow:hidden;box-shadow:0 26px 95px #000c,0 0 60px #bf7b2822;background:linear-gradient(135deg,#20150e,#13100d 60%)}
+    .topbar{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:18px 28px;border-bottom:1px solid var(--line);background:#120e0beb;position:relative;z-index:2}
+    .brand{display:flex;align-items:center;gap:13px;min-width:0}
+    .brand-icon{width:47px;height:47px;flex:0 0 auto;border-radius:13px;display:grid;place-items:center;font-size:27px;color:#29190b;background:linear-gradient(145deg,#ffdfa1,#c69550);box-shadow:0 0 25px #d69e4a5c}
+    .brand-copy{display:flex;flex-direction:column;line-height:1.22}
+    .brand-name{font-weight:950;font-size:17px;letter-spacing:.04em}
+    .brand-en{margin-top:5px;letter-spacing:.24em;color:#99866d;font-size:9px;font-weight:800}
+    .top-right{display:flex;align-items:center;gap:10px;flex-wrap:wrap;justify-content:flex-end}
+    .route-badge{display:flex;align-items:center;gap:7px;padding:8px 12px;border:1px solid #709a715e;border-radius:999px;background:#142019cc;color:#b2edc1;font-size:12px;font-weight:800;white-space:nowrap}
+    .route-dot{width:7px;height:7px;border-radius:50%;background:#82df9c;box-shadow:0 0 12px #82df9caa}
+    .version{font-weight:850;font-size:11px;color:#edc992;border:1px solid #bc985357;border-radius:7px;background:#33241363;padding:6px 8px;white-space:nowrap}
+    .top-link{font-weight:800;font-size:12px;color:#f8d69a;border:1px solid #ad834558;border-radius:9px;padding:8px 12px;background:#25190e;transition:background .2s}
+    .top-link:hover{background:#51341a}
+    .content{display:grid;grid-template-columns:1.03fr .97fr;min-height:578px}
+    .hero{position:relative;overflow:hidden;padding:clamp(32px,4vw,56px) clamp(28px,4vw,49px) 37px;background:radial-gradient(ellipse at 78% 59%,#6c3a1a55,transparent 43%),linear-gradient(145deg,#352115,#1c120d 59%,#140f0c);border-right:1px solid var(--line)}
+    .hero::after{content:"";position:absolute;inset:0;pointer-events:none;opacity:.5;background:repeating-linear-gradient(90deg,transparent 0 78px,#eeab5b09 79px 80px)}
+    .hero-inner{position:relative;z-index:1}
+    .eyebrow{display:flex;align-items:center;gap:12px;color:#e6b774;font-size:11px;font-weight:950;letter-spacing:.21em}
+    .eyebrow::before{content:"";width:24px;height:2px;background:linear-gradient(90deg,#ffcc7a,transparent)}
+    .hero h1{font-size:clamp(61px,6.3vw,90px);line-height:1.1;margin:23px 0 0;font-weight:1000;letter-spacing:.05em;text-shadow:0 9px 30px #0009}
+    .hero h1 .main-word{display:block}
+    .hero h1 .sub-word{display:block;font-size:clamp(33px,3.6vw,49px);color:var(--gold);letter-spacing:.04em;margin-top:9px;text-shadow:0 0 26px #c88d4473}
+    .red-seal{display:inline-block;width:13px;height:13px;border-radius:4px;background:#e75b45;margin-left:6px;box-shadow:0 0 21px #f05e405b}
+    .lead{font-size:17px;color:#f1dbc2;line-height:1.9;margin:22px 0 22px;max-width:400px}
+    .chips{display:flex;flex-wrap:wrap;gap:9px}
+    .chip{border:1px solid #bd91514b;background:#422b185b;color:#ffdb9e;border-radius:999px;font-size:12px;padding:7px 11px;white-space:nowrap}
+    .note{position:relative;margin-top:36px;max-width:425px;background:#18130fd9;border:1px solid #ab84454e;border-radius:15px;padding:16px 17px;box-shadow:0 12px 22px #0003}
+    .note-label{font-size:11px;color:#e2ba7b;letter-spacing:.15em;font-weight:950;margin-bottom:8px}
+    .note p{font-size:13px;color:#d3bd9e;line-height:1.85;margin:0}
+    .note strong{color:#fbe5b9}
+    .cards-art{position:absolute;z-index:0;right:-2px;bottom:-12px;width:270px;height:190px;opacity:.25;filter:drop-shadow(0 18px 18px #0008);pointer-events:none}
+    .art-card{position:absolute;right:53px;bottom:-35px;width:105px;height:150px;border:3px solid #f8d49e;border-radius:10px;background:linear-gradient(145deg,#eac690,#b88242);box-shadow:0 0 25px #c4946d36}
+    .art-card::before{content:"♠";position:absolute;inset:0;display:grid;place-items:center;font-size:67px;color:#634023}
+    .art-card:nth-child(1){transform:rotate(-27deg) translateX(-36px)}
+    .art-card:nth-child(2){transform:rotate(-5deg);background:linear-gradient(145deg,#27211d,#4a3828);border-color:#e1b477}
+    .art-card:nth-child(2)::before{content:"♥";color:#c88767}
+    .art-card:nth-child(3){transform:rotate(19deg) translateX(34px)}
+    .content-right{padding:29px 29px 24px;display:flex;flex-direction:column;gap:16px;background:linear-gradient(160deg,#1e1711 0%,#17130f 74%)}
+    .section-heading{display:flex;align-items:center;justify-content:space-between;font-size:11px;font-weight:950;letter-spacing:.21em;color:#a99474;margin-bottom:1px}
+    .number{font-size:11px;letter-spacing:.08em;color:#b6a084}
+    .panel{position:relative;background:linear-gradient(145deg,#302216ed,#241b14f0);border:1px solid #94704470;border-radius:18px;padding:21px 21px 19px;box-shadow:0 9px 28px #0005}
+    .join-panel{border-color:#d8a85caa;background:linear-gradient(145deg,#3b2819,#251b13 70%);overflow:hidden}
+    .join-panel::before{content:"";position:absolute;right:-100px;top:-180px;width:260px;height:290px;border-radius:50%;background:#dca15415;filter:blur(40px);pointer-events:none}
+    .panel-title{display:flex;align-items:center;gap:12px;margin-bottom:5px;position:relative}
+    .panel-icon{width:44px;height:44px;border-radius:12px;display:grid;place-items:center;font-size:24px;border:1px solid #d4a66b5c;color:#ffe0a5;background:#55391f7a;flex:0 0 auto}
+    .panel-icon.red{color:#ffbca1;border-color:#c98a765d;background:#512c2665}
+    .panel h2{font-size:22px;letter-spacing:.04em;line-height:1.25;margin:0;font-weight:950}
+    .panel .mini-en{font-size:9px;font-weight:950;color:#a99069;letter-spacing:.22em;margin-top:5px}
+    .desc{font-size:12px;color:#bda98d;margin:6px 0 15px;line-height:1.7}
+    label{display:block;font-size:12px;color:#d4b892;font-weight:850;margin-bottom:8px}
+    .room-row{display:flex;gap:10px}
+    .room-row input{width:100%;min-width:0;border-radius:9px;border:1px solid #ad895b66;background:#120f0d;color:#ffe9c8;padding:12px 13px;font-size:16px;letter-spacing:.18em;font-weight:900;text-transform:uppercase;outline:none;transition:box-shadow .2s,border-color .2s}
+    .room-row input::placeholder{font-size:13px;color:#8d806e;font-weight:650;letter-spacing:.09em}
+    .room-row input:focus{border-color:#f4bf6c;box-shadow:0 0 0 3px #eeae5940}
+    .cta{position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center;gap:10px;width:100%;min-height:49px;border:0;border-radius:10px;margin-top:13px;background:linear-gradient(100deg,#ffe2a2 0%,#e9ba73 47%,#d8a158 100%);box-shadow:0 5px 19px #e6a4532c;color:#302010;font-weight:950;font-size:15px;transition:transform .18s,box-shadow .18s}
+    .cta:hover{transform:translateY(-2px);box-shadow:0 10px 24px #e6a45350}
+    .cta::before{content:"";position:absolute;inset:0;width:40%;transform:translateX(-180%) skewX(-25deg);background:linear-gradient(90deg,transparent,#fff9cf66,transparent);animation:shimmer 7.5s ease-in-out infinite;pointer-events:none}
+    .field-hint{font-size:11px;color:#bda789;line-height:1.7;margin:10px 0 0}
+    .field-hint.error{color:var(--red)}
+    .diag-panel{background:linear-gradient(145deg,#221b16,#171411)}
+    .diag-intro{font-size:12px;color:#bcaa92;margin:10px 0 14px}
+    .test-row{display:grid;grid-template-columns:1fr auto;gap:12px;align-items:center;padding:12px 0;border-top:1px solid #ae875d28}
+    .test-name{display:flex;align-items:center;gap:9px;font-weight:900;font-size:13px}
+    .state-dot{height:8px;width:8px;flex:0 0 auto;border-radius:50%;background:#8a806e;box-shadow:0 0 0 3px #8a806e19}
+    .test-row[data-state="ok"] .state-dot{background:var(--green);box-shadow:0 0 0 3px #3ee48e24}
+    .test-row[data-state="bad"] .state-dot{background:var(--red);box-shadow:0 0 0 3px #fc6e6e24}
+    .test-row[data-state="busy"] .state-dot{background:var(--amber);box-shadow:0 0 0 3px #eabe492b;animation:breathe 1.2s infinite}
+    .test-status{font-size:11px;color:#a89a82;margin:5px 0 0 17px;word-break:break-word}
+    .test-row[data-state="ok"] .test-status{color:var(--green)}
+    .test-row[data-state="bad"] .test-status{color:var(--red)}
+    .test-btn{white-space:nowrap;min-width:79px;border:1px solid #bc965d87;border-radius:9px;background:#35271b;color:#f6d3a0;font-size:12px;font-weight:900;padding:9px 11px;transition:background .2s}
+    .test-btn:hover{background:#513923}
+    .diag-details{border-top:1px solid #ae875d28;padding-top:11px;margin-top:2px}
+    .diag-details summary{cursor:pointer;color:#c8ad86;font-size:11px;font-weight:850;list-style-position:inside}
+    .diag-details pre{white-space:pre-wrap;overflow-wrap:anywhere;max-height:140px;overflow:auto;background:#0f0d0c;color:#dbcebc;border:1px solid #a8824b36;border-radius:9px;padding:10px;font-size:11px;line-height:1.5}
+    .helper{border:1px dashed #b5955f52;padding:12px 15px;border-radius:11px;color:#bfae92;font-size:11px;line-height:1.75}
+    .helper strong{color:#f5d29b}
+    footer{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;padding:14px 28px;border-top:1px solid var(--line);background:#110e0b;color:#98836b;font-size:11px}
+    footer strong{color:#ebc28a}
+    footer a{color:#ebc28a}
+    .footer-update{border:0;padding:0;background:transparent;color:#ebc28a;font-size:inherit;font-weight:850;cursor:pointer}
+    .footer-update:hover{text-decoration:underline}
+    button:focus-visible,a:focus-visible,summary:focus-visible{outline:2px solid #ffe0a6;outline-offset:3px}
+    .appear-1{animation:rise .55s .05s both}.appear-2{animation:rise .55s .16s both}.appear-3{animation:rise .55s .28s both}
+    @keyframes rise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+    @keyframes shimmer{0%,57%,100%{transform:translateX(-180%) skewX(-25deg)}72%{transform:translateX(420%) skewX(-25deg)}}
+    @keyframes breathe{50%{opacity:.42}}
+    @media(max-width:850px){.content{grid-template-columns:1fr}.hero{padding:31px 31px 26px;border-right:none;border-bottom:1px solid var(--line)}.hero h1{font-size:clamp(56px,9vw,82px);margin-top:16px}.hero h1 .sub-word{font-size:clamp(32px,5.8vw,46px)}.lead{font-size:14px;margin:14px 0}.note{margin-top:17px}.cards-art{right:18px;bottom:0;transform:scale(.76);transform-origin:bottom right}.content-right{padding:24px 29px 25px}}
+    @media(max-width:510px){.outer{padding:0}.shell{border:0;border-radius:0;min-height:100dvh}.topbar{padding:13px 17px}.brand-icon{width:39px;height:39px;font-size:24px}.brand-name{font-size:15px}.brand-en{font-size:8px}.top-link{display:none}.route-badge{font-size:10px;padding:6px 9px}.version{padding:5px 7px}.hero{padding:24px 20px 21px}.hero h1{font-size:clamp(56px,15vw,68px)}.hero h1 .sub-word{font-size:clamp(31px,9vw,40px)}.eyebrow{font-size:9px}.lead{font-size:13px;line-height:1.7}.chip{font-size:11px;padding:6px 8px}.note{margin-top:16px;padding:12px 14px}.note p{font-size:12px}.cards-art{display:none}.content-right{padding:18px 16px 25px;gap:13px}.panel{padding:16px 15px 15px;border-radius:15px}.panel h2{font-size:19px}.panel-icon{width:39px;height:39px;font-size:21px}.desc{margin:6px 0 11px}footer{padding:13px 17px;font-size:10px}}
+    @media(max-height:520px) and (min-width:590px) and (max-width:950px){.outer{padding:8px}.shell{border-radius:17px}.topbar{padding:9px 17px}.brand-icon{width:35px;height:35px;font-size:20px}.content{grid-template-columns:.86fr 1.14fr}.hero{padding:24px 19px;border-right:1px solid var(--line);border-bottom:0}.hero h1{font-size:clamp(43px,7vw,60px)}.hero h1 .sub-word{font-size:clamp(26px,4vw,35px)}.lead{font-size:11px;margin:14px 0}.note{padding:10px 12px;margin-top:14px}.note p{font-size:11px}.chips{gap:5px}.chip{font-size:10px;padding:4px 7px}.cards-art{display:none}.content-right{padding:13px 14px;gap:10px}.panel{padding:12px}.panel h2{font-size:17px}.panel-icon{height:34px;width:34px;font-size:18px}.panel-title{gap:8px}.desc,.diag-intro{font-size:11px;margin:7px 0}.test-row{padding:6px 0}.cta{min-height:40px;margin-top:8px}.helper{padding:9px 11px}.field-hint{margin-top:6px}footer{padding:8px 17px}}
+
+    /* CN V1.1: Update history overlay shared with the main V7.6 visual language */
+    .log-top-btn{white-space:nowrap}
+    .changelog-overlay{position:fixed;inset:0;z-index:120;display:none;align-items:center;justify-content:center;padding:14px;background:rgba(5,5,5,.81);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
+    .changelog-overlay.open{display:flex;animation:changelogFade .18s ease both}
+    .changelog-dialog{width:min(680px,100%);max-height:min(720px,calc(100dvh - 28px));overflow:hidden;display:flex;flex-direction:column;border:1px solid #efc88771;border-radius:18px;background:linear-gradient(135deg,#292017,#14120f 65%,#111515);box-shadow:0 25px 80px #000d,0 0 55px #bd87212a;animation:changelogEnter .26s ease both}
+    .changelog-head{display:flex;align-items:flex-start;justify-content:space-between;gap:15px;padding:24px 25px 17px;border-bottom:1px solid #dfb47635}
+    .changelog-eyebrow{color:#cda36a;font-size:10px;font-weight:850;letter-spacing:2px}
+    .changelog-head h2{color:#ffebc7;font-size:23px;margin:7px 0 0;line-height:1.35}
+    .changelog-head h2 span{font-size:12px;color:#c79f62;vertical-align:middle;letter-spacing:1px}
+    .changelog-close{display:grid;place-items:center;flex:0 0 36px;width:36px;height:36px;border-radius:9px;border:1px solid #f2d09466;background:#2d261d;color:#f0d3a1;font-size:25px;cursor:pointer}
+    .changelog-close:hover{background:#443323}
+    .changelog-history-info{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;flex-wrap:wrap;padding:11px 25px 10px;border-bottom:1px solid #d1a86523;background:#100e0b8a}
+    .changelog-history-info strong{font-size:12px;color:#ffe1a0}
+    .changelog-history-info span{font-size:10px;color:#ab9574;line-height:1.5}
+    .changelog-items{overflow-y:auto;padding:1px 25px 6px;min-height:0;overscroll-behavior:contain;scrollbar-color:#a37b49 #1a1510;scrollbar-width:thin}
+    .changelog-era{display:flex;flex-wrap:wrap;gap:7px;align-items:baseline;margin:14px 0 11px;padding:9px 11px;border-radius:9px;background:linear-gradient(90deg,#47331e9c,#17120f9c);border:1px solid #f1c27435}
+    .changelog-era-title{color:#ffe0a2;font-weight:900;font-size:13px}
+    .changelog-era small{color:#a9957b;font-size:10px;flex:1;line-height:1.5}
+    .changelog-era b{font-size:10px;color:#bda37e;font-weight:750;white-space:nowrap}
+    .changelog-item{position:relative;padding:9px 12px 11px 20px;border-left:1px solid #9d754e5a;margin:0 0 2px 5px}
+    .changelog-item::before{content:'';position:absolute;left:-4px;top:17px;width:7px;height:7px;background:#b59464;border-radius:50%}
+    .changelog-item.is-latest{border-left-color:#e4b765;background:linear-gradient(90deg,#d5a45312,transparent 70%);border-radius:0 10px 10px 0}
+    .changelog-item.is-latest::before{background:#ffe5a2;box-shadow:0 0 12px #ffcb7d9a}
+    .changelog-date{font-size:11px;font-weight:900;letter-spacing:1px;color:#e8c27f}
+    .changelog-date span{font-size:10px;margin-left:10px;color:#987b5c;font-weight:500}
+    .changelog-item h3{color:#f9e7c5;font-size:14px;margin:5px 0 4px}
+    .changelog-item p{font-size:12px;color:#c1ae96;margin:0;line-height:1.55}
+    .changelog-bottom{display:flex;justify-content:space-between;align-items:center;gap:12px;border-top:1px solid #d1a8652d;padding:12px 25px;color:#a48b6d;font-size:11px}
+    .changelog-bottom button{border:0;border-radius:9px;padding:9px 22px;background:linear-gradient(120deg,#ffe2a0,#d1a055);color:#332417;font-weight:900;cursor:pointer}
+    .changelog-close:focus-visible,.changelog-bottom button:focus-visible,.changelog-items:focus-visible{outline:2px solid #ffe0a6;outline-offset:2px}
+    @keyframes changelogFade{from{opacity:0}to{opacity:1}}
+    @keyframes changelogEnter{from{opacity:0;transform:translateY(14px) scale(.985)}to{opacity:1;transform:translateY(0) scale(1)}}
+    @media(max-width:510px){.route-badge{display:none}.log-top-btn{display:inline-flex!important;font-size:11px;padding:6px 8px}.top-right{gap:6px}.changelog-head{padding:18px 18px 13px}.changelog-items{padding:1px 18px 3px}.changelog-bottom{padding:10px 18px}.changelog-history-info{padding:10px 18px;gap:3px}.changelog-history-info span{font-size:9px}.changelog-era{margin:11px 0 8px;padding:8px}.changelog-era small{flex:1 0 100%;order:3}.changelog-item{padding-top:9px;padding-bottom:10px}}
+    @media(max-height:440px){.changelog-dialog{max-height:calc(100dvh - 12px)}.changelog-overlay{padding:6px}.changelog-head{padding-top:10px;padding-bottom:8px}.changelog-bottom{padding-top:7px;padding-bottom:7px}}
+    @media(prefers-reduced-motion:reduce){.changelog-overlay.open,.changelog-dialog{animation:none!important}}
+    @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;scroll-behavior:auto!important;transition:none!important}}
   </style>
 </head>
-<body><main>
-  <div class="eyebrow">CHUINIUBI / CONNECTION TEST</div>
-  <h1>吹牛逼 <em>备用联机入口</em></h1>
-  <p>这是为中英两地好友联机准备的 Cloudflare Pages 免费接入测试站。它不会创建新的游戏服务器，所有人仍然连接原来的同一房间。</p>
-  <section class="card">
-    <h2>① 检查游戏服务器可达性</h2>
-    <p class="desc">通过 Pages Service Binding 调用原 Worker 的 <code>/health</code>。出现版本号 <code>1.1-voice</code> 表示 HTTP 链路基本可用。</p>
-    <div class="actions"><button id="healthBtn" type="button">测试游戏服务器</button><button id="echoBtn" class="secondary" type="button">测试 Pages WebSocket</button></div>
-    <div id="healthStatus" class="status" role="status" aria-live="polite">尚未检测。请分别点击两个测试按钮。</div>
+<body>
+  <div class="outer">
+    <div class="shell">
+      <header class="topbar">
+        <div class="brand"><div class="brand-icon" aria-hidden="true">♠</div><div class="brand-copy"><span class="brand-name">宿舍牌局</span><span class="brand-en">DORM POKER CLUB</span></div></div>
+        <nav class="top-right" aria-label="站点导航"><span class="route-badge"><i class="route-dot" aria-hidden="true"></i> 跨境备用线路</span><span class="version">CN · V1.1</span><button class="top-link log-top-btn" id="changelogOpenBtn" type="button" aria-haspopup="dialog" aria-controls="changelogOverlay">更新日志 ↗</button><a class="top-link" href="https://kilemoran.github.io/chuiniubi/" target="_blank" rel="noopener noreferrer">原版大厅 ↗</a></nav>
+      </header>
+      <div class="content">
+        <section class="hero" aria-label="中国玩家入口介绍">
+          <div class="hero-inner appear-1">
+            <div class="eyebrow">CHUINIUBI / CROSS-BORDER LOBBY</div>
+            <h1><span class="main-word">吹牛逼<span class="red-seal" aria-hidden="true"></span></span><span class="sub-word">中国玩家入口</span></h1>
+            <p class="lead">两副扑克牌，一张纸箱桌。<br>隔着大洋，也能一起吹牛。</p>
+            <div class="chips"><span class="chip">♠ 4–6 人好友局</span><span class="chip">◈ 同一房间</span><span class="chip">↻ 断线可恢复</span></div>
+            <div class="note"><div class="note-label">WHY THIS ENTRANCE?</div><p>如果你打开主站后一直显示<strong>「未连接」</strong>，可以从这里进入。备用线路连接的仍是<strong>原来的游戏房间</strong>，不另建服务器。</p></div>
+          </div>
+          <div class="cards-art" aria-hidden="true"><i class="art-card"></i><i class="art-card"></i><i class="art-card"></i></div>
+        </section>
+        <main class="content-right">
+          <div class="section-heading appear-1"><span>SELECT YOUR ACTION</span><span class="number">01 / 02</span></div>
+          <section class="panel join-panel appear-2" aria-labelledby="join-heading">
+            <div class="panel-title"><div class="panel-icon" aria-hidden="true">♠</div><div><h2 id="join-heading">快速进入房间</h2><div class="mini-en">JOIN YOUR FRIENDS</div></div></div>
+            <p class="desc">输入朋友发来的六位房间号，随后在游戏里设置昵称并加入。</p>
+            <label for="roomCode">六位房间号 · 可以留空</label>
+            <div class="room-row"><input id="roomCode" name="room" maxlength="6" placeholder="例如 ACZT2H" autocapitalize="characters" autocomplete="off" spellcheck="false" inputmode="text"></div>
+            <button class="cta" id="launchBtn" type="button">通过备用线路进入游戏 <span aria-hidden="true">→</span></button>
+            <p class="field-hint" id="roomHint">房间号留空时，可前往游戏大厅创建新房间。</p>
+          </section>
+          <section class="panel diag-panel appear-3" aria-labelledby="diag-heading">
+            <div class="panel-title"><div class="panel-icon red" aria-hidden="true">♥</div><div><h2 id="diag-heading">联机状态检测</h2><div class="mini-en">CONNECTION DIAGNOSTICS</div></div></div>
+            <p class="diag-intro">连接遇到问题？先依次检查游戏服务器和实时通信。</p>
+            <div class="test-row" id="healthRow" data-state="idle"><div><div class="test-name"><i class="state-dot" aria-hidden="true"></i> 游戏服务器</div><p class="test-status" id="healthStatus" role="status" aria-live="polite">尚未检测</p></div><button class="test-btn" id="healthBtn" type="button">检测 HTTP</button></div>
+            <div class="test-row" id="echoRow" data-state="idle"><div><div class="test-name"><i class="state-dot" aria-hidden="true"></i> WebSocket 通信</div><p class="test-status" id="echoStatus" role="status" aria-live="polite">尚未检测</p></div><button class="test-btn" id="echoBtn" type="button">检测 WSS</button></div>
+            <details class="diag-details"><summary>查看详细检测结果</summary><pre id="testDetails">点击上方按钮，分别测试 HTTP 与 WebSocket。</pre></details>
+          </section>
+          <aside class="helper appear-3"><strong>温馨提示：</strong>英国和中国玩家仍可使用同一个六位房间号。本入口只调整游戏通信线路；游戏内语音采用独立的 RealtimeKit 连接，需要单独测试。</aside>
+        </main>
+      </div>
+      <footer><span>© 2026 <strong>KyleMoran</strong> · 宿舍牌局</span><span>CN 备用大厅 V1.1 · <button type="button" id="changelogFooterBtn" class="footer-update">查看更新日志 ↗</button> · <a href="https://github.com/KileMoran/chuiniubi-relay" target="_blank" rel="noopener noreferrer">GitHub 源码 ↗</a></span></footer>
+    </div>
+  </div>
+
+<div class="changelog-overlay" id="changelogOverlay" aria-hidden="true">
+  <section class="changelog-dialog" role="dialog" aria-modal="true" aria-labelledby="changelogTitle" tabindex="-1">
+    <div class="changelog-head">
+      <div><span class="changelog-eyebrow">WHAT'S NEW · 更新记录</span><h2 id="changelogTitle">版本更新日志 <span>CN V1.1</span></h2></div>
+      <button type="button" id="changelogCloseBtn" class="changelog-close" aria-label="关闭更新日志">×</button>
+    </div>
+    <div class="changelog-history-info"><strong>33 条记录 · 全部开发历程</strong><span>中国玩家入口 3 条 · 主游戏历史 30 条</span></div>
+    <div class="changelog-items" tabindex="0" aria-label="版本更新历史，向下滚动查看更多">
+
+  <div class="changelog-era"><span class="changelog-era-title">CN · 中国玩家备用入口</span><small>跨境联机中转与独立入口</small><b>3 版</b></div>
+  <article class="changelog-item is-latest"><div class="changelog-date">CN V1.1 <span>2026.11.07</span></div><h3>完整更新日志上线</h3><p>为中国玩家入口增加与主站一致的金色更新日志弹窗，收录主游戏 30 个版本及备用入口的迭代记录；手机端也能查看、滚动和关闭。</p></article>
+  <article class="changelog-item"><div class="changelog-date">CN V1.0 <span>2026.11.07</span></div><h3>中国玩家大厅视觉升级</h3><p>新增金色主题首页、六位房间号快速加入、独立 HTTP / WebSocket 状态检测、移动端适配及原游戏跳转。</p></article>
+  <article class="changelog-item"><div class="changelog-date">CN Beta <span>2026.11.07</span></div><h3>跨境备用线路打通</h3><p>采用 Cloudflare Pages Functions 与 Service Binding 转发到原游戏 Worker；保留同一房间数据，完成服务端检测与国内玩家实际联机验证。</p></article>
+  <div class="changelog-era"><span class="changelog-era-title">主游戏 · 完整开发记录</span><small>以下内容沿用原版 V7.6 游戏更新日志</small><b>30 版</b></div>
+
+
+<div class="changelog-era"><span class="changelog-era-title">V7 · 真人联机与语音</span><small>将宿舍纸箱牌桌带上网络</small><b>10 版</b></div>
+
+
+<article class="changelog-item"><div class="changelog-date">V7.6 <span>2026.11.07</span></div><h3>金色动态首页</h3><p>新增版本号、项目作者与更新日志入口；首页采用淡入过渡、金色流光与按钮悬停光效。</p></article>
+
+
+<article class="changelog-item"><div class="changelog-date">V7.5</div><h3>正式游戏首页设计</h3><p>重做游戏入口：左侧昵称与游戏介绍，右侧上方创建房间、下方加入房间；适配桌面及手机。</p></article>
+
+
+<article class="changelog-item"><div class="changelog-date">V7.4.3</div><h3>首页布局重构</h3><p>将传统纵向表单拆分为左右区域，创建房间与加入房间分别显示；保留恢复上次房间。</p></article>
+
+
+<article class="changelog-item"><div class="changelog-date">V7.4.2</div><h3>精简质疑结果提示</h3><p>移除牌桌中央重复的“抓到假牌／质疑失败”详情框和收牌文字，只保留上方简短提示；保留揭牌收牌动画。</p></article>
+
+
+<article class="changelog-item"><div class="changelog-date">V7.4.1</div><h3>好友音量面板修复</h3><p>修复音量条横向铺满屏幕的问题，改为靠右的紧凑设置面板。</p></article>
+
+
+<article class="changelog-item"><div class="changelog-date">V7.4</div><h3>实时语音与手机横屏</h3><p>加入 RealtimeKit 语音入口、麦克风及扬声器控制、好友音量和说话提示；手机横屏采用左牌桌、右操作区。</p></article>
+
+
+<article class="changelog-item"><div class="changelog-date">V7.3</div><h3>手机画面适配</h3><p>重排手机竖屏的牌桌、玩家头像、操作按钮和手牌；为手机横屏增加独立布局，减少遮挡。</p></article>
+
+
+<article class="changelog-item"><div class="changelog-date">V7.2</div><h3>刷新恢复与断线重连</h3><p>保存房间及玩家凭证，刷新后尝试恢复原座位与手牌；增加手动重连入口，并减少断线时的弹窗干扰。</p></article>
+
+
+<article class="changelog-item"><div class="changelog-date">V7.1</div><h3>浏览器部署包</h3><p>整理适合 GitHub 上传的网页、Worker、Durable Objects 配置与部署说明，支持通过 Cloudflare 网页自动部署。</p></article>
+
+
+<article class="changelog-item"><div class="changelog-date">V7.0</div><h3>真人联网版</h3><p>移除 AI 玩家，支持 4–6 人创建房间、输入六位房间号加入；游戏规则与私人手牌由服务器管理，同步出牌、质疑和胜负。</p></article>
+
+
+<div class="changelog-era"><span class="changelog-era-title">V6 · 手牌与交互打磨</span><small>让大量手牌也能准确操作</small><b>4 版</b></div>
+
+
+<article class="changelog-item"><div class="changelog-date">V6.3</div><h3>操作按钮与回合修复</h3><p>调整操作按钮与手牌的相对位置；修复全员连续不出牌时的弃牌结算等问题。</p></article>
+
+
+<article class="changelog-item"><div class="changelog-date">V6.2</div><h3>底部操作栏居中</h3><p>重新排列底部操作栏和出牌按钮，减少被手牌遮挡的情况。</p></article>
+
+
+<article class="changelog-item"><div class="changelog-date">V6.1</div><h3>精准选牌与跨回合预选</h3><p>修复重叠手牌的点击识别；在其他玩家行动时保留已选的手牌，方便提前准备下一手。</p></article>
+
+
+<article class="changelog-item"><div class="changelog-date">V6.0</div><h3>单排滑动手牌</h3><p>手牌改为一排智能重叠、可左右滑动；牌数较多时仍能选择与预览已选牌。</p></article>
+
+
+<div class="changelog-era"><span class="changelog-era-title">V5 · 宿舍牌桌细节</span><small>从视觉表现打磨到完整对局反馈</small><b>10 版</b></div>
+
+
+<article class="changelog-item"><div class="changelog-date">V5.9</div><h3>手牌按大小排序</h3><p>手牌按 2、A、K、Q、J、10 至 3 从左到右排列，便于快速找牌。</p></article>
+
+
+<article class="changelog-item"><div class="changelog-date">V5.8</div><h3>随机先手动画</h3><p>增加开局随机决定先出牌玩家的动画，显示抽签过程及结果。</p></article>
+
+
+<article class="changelog-item"><div class="changelog-date">V5.7</div><h3>当前宣称点数</h3><p>增加当前轮宣称点数显示，使跟牌时更清楚本轮必须宣称的牌点。</p></article>
+
+
+<article class="changelog-item"><div class="changelog-date">V5.6</div><h3>自己的座位优化</h3><p>调整左下角自己的玩家信息与手牌布局，减少位置冲突。</p></article>
+
+
+<article class="changelog-item"><div class="changelog-date">V5.5</div><h3>清理重复顶部提示</h3><p>移除顶部重复的最新出牌宣称信息，简化牌桌上的提示层级。</p></article>
+
+
+<article class="changelog-item"><div class="changelog-date">V5.4</div><h3>出牌提示精简</h3><p>将其他玩家的操作提示压缩为简洁的一行，例如“玩家 A 出了 3 张 7”。</p></article>
+
+
+<article class="changelog-item"><div class="changelog-date">V5.3</div><h3>出牌反馈优化</h3><p>增加或调整玩家出牌时的文字提示，强化轮到谁、打出多少张牌的反馈。</p></article>
+
+
+<article class="changelog-item"><div class="changelog-date">V5.2</div><h3>质疑喊话与动画</h3><p>质疑者显示“假的！！！”喊话气泡，配合揭牌和假牌标记效果。</p></article>
+
+
+<article class="changelog-item"><div class="changelog-date">V5.1</div><h3>玩家头像和行动高亮</h3><p>扩大玩家头像与昵称，突出当前行动者，使桌边各玩家更容易分辨。</p></article>
+
+
+<article class="changelog-item"><div class="changelog-date">V5</div><h3>纸箱牌桌强化</h3><p>让纸箱成为画面中心，调整写实宿舍场景与玩家围桌布局。</p></article>
+
+
+<div class="changelog-era"><span class="changelog-era-title">V1–V4 · 从规则原型到宿舍场景</span><small>游戏最初的四个开发阶段</small><b>6 版</b></div>
+
+
+<article class="changelog-item"><div class="changelog-date">V4.1</div><h3>聚焦纸箱牌桌</h3><p>重新调整镜头与桌面占比，让牌桌成为主要交互空间。</p></article>
+
+
+<article class="changelog-item"><div class="changelog-date">V4</div><h3>写实宿舍场景</h3><p>将牌桌进一步融入真实大学宿舍，调整床位、书桌及纸箱的位置关系。</p></article>
+
+
+<article class="changelog-item"><div class="changelog-date">V3</div><h3>宿舍主题牌局</h3><p>引入宿舍背景与多人座位布局，完善牌桌视觉呈现。</p></article>
+
+
+<article class="changelog-item"><div class="changelog-date">V2.1</div><h3>盖牌与掀牌分区</h3><p>改进桌面盖牌、揭牌的显示区域以及质疑时的视觉反馈。</p></article>
+
+
+<article class="changelog-item"><div class="changelog-date">V2</div><h3>网页牌桌与出牌表现</h3><p>将卡牌对局做成网页交互界面，加入出牌到桌面的视觉表现。</p></article>
+
+
+<article class="changelog-item"><div class="changelog-date">V1</div><h3>基础规则原型</h3><p>建立双副扑克牌、虚报点数、轮流出牌、掀牌质疑及收牌等核心玩法的早期原型。</p></article>
+
+
+    </div>
+    <div class="changelog-bottom"><span>制作 / 维护 · KyleMoran</span><button type="button" id="changelogDoneBtn">了解了</button></div>
   </section>
-  <section class="card">
-    <h2>② 用备用服务器进入原游戏</h2>
-    <p class="desc">本入口将备用 WSS 地址带入原来的 GitHub Pages 游戏页面。英国玩家仍可使用原地址，两端最终连接同一个 Worker。</p>
-    <label for="roomCode">房间号（可选）</label><input id="roomCode" maxlength="6" placeholder="例如 ACZT2H" autocomplete="off" spellcheck="false">
-    <div class="actions" style="margin-top:14px"><button id="launchBtn" type="button">通过备用入口进入游戏</button></div>
-    <p class="small">需要先用同一个昵称加入尚未开局的房间；已开始的房间仅支持此前获得过身份凭证的玩家恢复。游戏内的「高级设置」也可以直接输入本页的 <code>wss://</code> 地址。</p>
-  </section>
-  <section class="card">
-    <h2>③ 如何判断有没有修好？</h2>
-    <p class="desc" style="margin:0">先在中国大陆手机上测试本页是否打开，再测试 <code>/health</code> 和 Pages WebSocket。只有两项测试基本通过，才继续尝试进入实际游戏房间。即使牌局联机成功，RealtimeKit 语音仍需单独验证。</p>
-  </section>
-  <footer>测试版 · 作者 KyleMoran · 不收集昵称或创建账号 · 页面可以公开访问，请勿分享个人身份 Token。</footer>
-</main>
+</div>
 <script>
-const $=id=>document.getElementById(id);
-const resultStatus=$('healthStatus');
-const update=(message,cls)=>{resultStatus.textContent=message;resultStatus.className='status'+(cls?' '+cls:'');};
-$('healthBtn').addEventListener('click',async()=>{
-  update('正在通过 Pages 连接游戏 Worker…','warn');
-  const ctrl=new AbortController(),timer=setTimeout(()=>ctrl.abort(),12000);
-  try{
-    const res=await fetch('/health',{signal:ctrl.signal,cache:'no-store'});
-    const raw=await res.text();
-    let data;try{data=JSON.parse(raw)}catch{data=null}
-    if(res.ok&&data?.ok){update('✅ 游戏服务器可达！HTTP '+res.status+'\n'+JSON.stringify(data,null,2),'ok');}
-    else{update('❌ 游戏服务器检测未通过（HTTP '+res.status+'）\n'+(data?JSON.stringify(data,null,2):raw.slice(0,900)),'bad');}
-  }catch(error){update('❌ 连接失败：'+(error.name==='AbortError'?'超过 12 秒未响应':String(error)),'bad')}
-  finally{clearTimeout(timer)}
-});
-$('echoBtn').addEventListener('click',()=>{
-  update('正在测试 Pages WebSocket (wss)…','warn');
-  let settled=false;
-  const scheme=location.protocol==='https:'?'wss:':'ws:';
-  const ws=new WebSocket(scheme+'//'+location.host+'/echo');
-  const timer=setTimeout(()=>{if(!settled){settled=true;update('❌ WebSocket 12 秒超时','bad');ws.close();}},12000);
-  function complete(ok,message){if(settled)return;settled=true;clearTimeout(timer);update(message,ok?'ok':'bad');try{ws.close()}catch{}}
-  ws.onopen=()=>ws.send('ping');
-  ws.onmessage=event=>complete(event.data==='pong','✅ Pages WebSocket 握手及双向数据正常。','❌ 收到非预期数据：'+event.data);
-  ws.onerror=()=>complete(false,'❌ Pages WebSocket 无法连接。');
-  ws.onclose=()=>{if(!settled)complete(false,'❌ Pages WebSocket 已关闭，未收到应答。')};
-});
-$('launchBtn').addEventListener('click',()=>{
-  const room=$('roomCode').value.trim().toUpperCase();
-  if(room && !/^[A-Z0-9]{6}$/.test(room)){update('⚠️ 房间号必须是六位字母或数字，也可以留空。','warn');return}
-  const u=new URL('https://kilemoran.github.io/chuiniubi/');
-  u.searchParams.set('server','wss://'+location.host);
-  if(room)u.searchParams.set('room',room);
-  location.href=u.toString();
-});
-$('roomCode').value=(new URL(location.href).searchParams.get('room')||'').toUpperCase().slice(0,6);
+(() => {
+  'use strict';
+  const $ = id => document.getElementById(id);
+  const details = $('testDetails');
+  // Changelog is a visual-only overlay: no game server or WebSocket state is touched.
+  const changelog = $('changelogOverlay');
+  let previousFocus = null;
+  let previousOverflow = '';
+  function toggleChangelog(show) {
+    if (show) {
+      previousFocus = document.activeElement;
+      previousOverflow = document.body.style.overflow;
+      document.body.style.overflow = 'hidden';
+      changelog.classList.add('open');
+      changelog.setAttribute('aria-hidden', 'false');
+      $('changelogCloseBtn').focus();
+    } else {
+      changelog.classList.remove('open');
+      changelog.setAttribute('aria-hidden', 'true');
+      document.body.style.overflow = previousOverflow;
+      previousFocus?.focus?.();
+    }
+  }
+  $('changelogOpenBtn').addEventListener('click', () => toggleChangelog(true));
+  $('changelogFooterBtn').addEventListener('click', () => toggleChangelog(true));
+  $('changelogCloseBtn').addEventListener('click', () => toggleChangelog(false));
+  $('changelogDoneBtn').addEventListener('click', () => toggleChangelog(false));
+  changelog.addEventListener('click', event => { if (event.target === changelog) toggleChangelog(false); });
+  document.addEventListener('keydown', event => {
+    if (!changelog.classList.contains('open')) return;
+    if (event.key === 'Escape') { event.preventDefault(); toggleChangelog(false); return; }
+    if (event.key === 'Tab') {
+      const focusables = Array.from(changelog.querySelectorAll('button, [tabindex="0"]'));
+      const index = focusables.indexOf(document.activeElement);
+      if (event.shiftKey && index <= 0) { event.preventDefault(); focusables[focusables.length-1].focus(); }
+      else if (!event.shiftKey && index === focusables.length-1) { event.preventDefault(); focusables[0].focus(); }
+    }
+  });
+  const detailLogs = [];
+  const record = (label, line) => { detailLogs.push(label + ': ' + line); details.textContent = detailLogs.slice(-5).join('\n\n'); };
+  function state(kind, status, message) {
+    $(kind + 'Row').dataset.state = status;
+    $(kind + 'Status').textContent = message;
+  }
+  $('roomCode').value = (new URL(location.href).searchParams.get('room') || '').toUpperCase().slice(0, 6);
+  $('roomCode').addEventListener('input', () => {
+    const field = $('roomCode');
+    field.value = field.value.toUpperCase().replace(/[^A-Z0-9]/g,'').slice(0,6);
+    $('roomHint').classList.remove('error');
+    $('roomHint').textContent = '房间号留空时，可前往游戏大厅创建新房间。';
+  });
+
+  $('launchBtn').addEventListener('click', () => {
+    const room = $('roomCode').value.trim().toUpperCase();
+    if (room && !/^[A-Z0-9]{6}$/.test(room)) {
+      $('roomHint').textContent = '请输入完整的 6 位房间号，或者清空后进入游戏大厅。';
+      $('roomHint').classList.add('error');
+      $('roomCode').focus();
+      return;
+    }
+    if (!location.host || !/^https?:$/.test(location.protocol)) {
+      $('roomHint').textContent = '请先将此页面部署到 Cloudflare Pages，再使用备用线路进入游戏。';
+      $('roomHint').classList.add('error');
+      return;
+    }
+    const url = new URL('https://kilemoran.github.io/chuiniubi/');
+    url.searchParams.set('server', (location.protocol === 'https:' ? 'wss://' : 'ws://') + location.host);
+    if (room) url.searchParams.set('room', room);
+    window.location.assign(url.toString());
+  });
+
+  $('healthBtn').addEventListener('click', async () => {
+    const btn = $('healthBtn'); btn.disabled = true; state('health', 'busy', '正在连接原游戏服务器…');
+    const ctrl = new AbortController();
+    const timer = setTimeout(() => ctrl.abort(), 12000);
+    try {
+      const res = await fetch('/health', { signal: ctrl.signal, cache: 'no-store' });
+      const raw = await res.text();
+      let data; try { data = JSON.parse(raw); } catch { data = null; }
+      if (res.ok && data?.ok) {
+        state('health', 'ok', '已连接 · ' + (data.version || '服务器正常'));
+        record('HTTP', '✅ ' + JSON.stringify(data));
+      } else {
+        state('health', 'bad', '连接失败 · HTTP ' + res.status);
+        record('HTTP', '❌ ' + (data ? JSON.stringify(data) : raw.slice(0, 800)));
+      }
+    } catch (error) {
+      const msg = error?.name === 'AbortError' ? '12 秒超时' : String(error);
+      state('health', 'bad', '连接失败 · ' + msg);
+      record('HTTP', '❌ ' + msg);
+    } finally { clearTimeout(timer); btn.disabled = false; }
+  });
+
+  $('echoBtn').addEventListener('click', () => {
+    const btn = $('echoBtn'); btn.disabled = true; state('echo', 'busy', '正在建立 WebSocket 通信…');
+    let socket; let finished = false;
+    const settle = (success, message) => {
+      if (finished) return;
+      finished = true; clearTimeout(timer); btn.disabled = false;
+      state('echo', success ? 'ok' : 'bad', message);
+      record('WebSocket', (success ? '✅ ' : '❌ ') + message);
+      try { socket?.close(); } catch {}
+    };
+    const timer = setTimeout(() => settle(false, '12 秒超时'), 12000);
+    try {
+      const scheme = location.protocol === 'https:' ? 'wss://' : 'ws://';
+      socket = new WebSocket(scheme + location.host + '/echo');
+      socket.onopen = () => socket.send('ping');
+      socket.onmessage = event => settle(event.data === 'pong', event.data === 'pong' ? '握手和双向通信正常' : '返回数据异常：' + event.data);
+      socket.onerror = () => settle(false, 'WebSocket 无法连接');
+      socket.onclose = () => { if (!finished) settle(false, '连接已关闭，未收到回应'); };
+    } catch (error) { settle(false, '无法发起连接：' + String(error)); }
+  });
+})();
 </script>
-</body></html>
+</body>
+</html>
