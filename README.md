@@ -92,4 +92,4 @@ README.md             # 本说明
 - https://developers.cloudflare.com/pages/configuration/monorepos/
 - https://developers.cloudflare.com/workers/runtime-apis/websockets/
 
-制作 / 维护：KyleMoran。
+制作 / 维护：KyleMoran
